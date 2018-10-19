@@ -1,0 +1,220 @@
+虚拟机：虚拟化技术Virtual Machine(VM),通过团建模拟出一个具有完整
+硬件系统的计算机系统（完全隔离的环境）
+生成现有操作系统的全新虚拟映像。。。
+通过软件模拟硬件功能，简单、方便、节省资源、易于扩展
+
+Virtual Box 单机开发、免费、小
+
+bin:执行命令
+etc:系统配置
+home:创建用户里面就有文件夹
+usr:安装文件装这里
+opt:安装包放这里
+var:会变动的东西
+lib:类库
+dev:设备
+
+su 切换用户 exit
+ps -ef|grep sshd 查看所有SSH服务是否启动（重要）
+kill -9 PID
+service sshd start 启动SSH服务
+service sshd restart 重启SSH服务
+service sshd stop 停止SSH服务
+ifconfig 查看网卡IP（启用状态下）
+ifconfig -a 查看所有网卡
+ifconfig eht0 up/down 启用/禁用
+dhclient eht0 自动获取IP
+clear 清屏
+
+cat 查看小文件
+tail查看大文件	
+tail -10查看后10行
+head -10查看前10行
+tail -f 查看log(-f 可以方便查阅正在改变的日志文件（最尾部的内容显示在屏幕上，实时刷新））
+
+/linux根目录，
+cd /返回根目录
+cd .. 返回上一级目录
+cd usr进入usr文件夹（以当前目录为准的相对路径）
+cd /test/test01 (绝对路径)
+ls查看当前目录下的文件以及文件夹
+ls-l查看当前目录下文件的详细信息
+ls-a查看当前目录下所有文件（包含隐藏文件）
+ls-la查看当前目录下所有文件（列表的形式）
+man config(查看Linux里面关于config的详细描述，Q退出）
+mkdir 文件目录 创建文件夹
+
+挂载：mount/dev/cdrom  /mnt/cdrom    把dev下面的cdrom挂载到mnt下的cdrom文件夹下
+取消挂载：umount/mnt/cdrom 
+mkdir -p soft/tomcat (创建多层目录）当前目录下
+mkdir -p /soft/tomcat 根目录下
+删除目录：rmdir
+删除多层目录：rmdir -r
+删除多层目录（不带提示）：rmdir -rf
+rm -r /test
+
+whereis pwd：看命令在哪。把pwd命令相关的所有都列出来
+touch 文件名（相对路径/绝对路径）创建文件
+vi文件名	修改文件
+命令工作模式、编辑工作模式、底行模式
+进入底行模式“：wq!”保存退出 "：q!"直接退出不保存
+替换内容：" :%s/被替换的/替换成/g "
+显示行号： ":set nu"
+全局修改：/etc/virc vi的配置文件 最后加上 :set nu
+重命名：mv 原始名 修改后的名字
+mv abc.txt 123.txt 
+
+拷贝：cp -fr 原始文件 要拷贝的地方
+cp -fr /test/123.txt /uer
+权限：
+- rw-r--r--: -文件
+d rwxr-xr-x: d目录，r:read,w:write,x:execute
+rwx	r-x	r-x
+111	101	101
+7	5	5
+用户	用户组	其他组
+最高权限:777
+chmod g+w 文件名 给组加写权限
+chmod u+w 文件名 给用户加写权限
+chmod o+w 文件名 给其他组加写权限
+chmod g-w 文件名 给组减去写权限
+chmod 777 文件名 
+chmod 777 -R 文件名 递归授权
+
+groupadd tomcat 创建tomcat用户组
+groupdel tomcat	删除tomcat用户组
+groupadd -g 701 tomcat 创建tomcat用户组,指定groupId为701
+useradd -g 701 tomcat 在tomcat组下创建用户tomcat
+
+切换用户：su(-)tomcat 注意：加-的话，环境变量使用的tomcat用户定义的环境变量
+1、rpm包，相当于Windows里EXE安装方式，属于二进制安装方式。
+2、tar包，直接解压安装
+3、yum安装（centOS的在线安装工具），在线安装的rpm
+
+rpm安装的常用命令：
+rpm -i	安装 （install)
+rpm -ivh 安装并显示进度
+
+chown tomcat jdk-7.... 改变文件的所有者
+root用户没有执行权限，但是也可以执行文件
+
+tomcat用户下：配置环境变量（用户级别）
+cd
+ls -la
+.bash_profile
+vi .bash_profile(JAVA_HOME= PATH=)
+JAVA_HOME=/usr/java/jdk1.7.0_67
+export JAVA_HOME//让JAVA_HOME生效
+PATH=$JAVA_HOME/bin:$PATH:$HOME/bin
+
+echo $PATH
+
+root用户下配置环境变量
+1、vi/etc/profile
+	JAVA_HOME=/usr/java/jdk1.7.0_67
+	export JAVA_HOME
+	PATH=$JAVA_HOME/bin:$PATH
+	export PATH
+2、source /etc/profile 让该配置文件立即生效
+
+chkconfig --list查看服务
+
+mysql安装--
+1、查找是否安装过mysql的rpm包
+rpm -qa | grep mysql
+若有卸载
+rpm -e 卸载的rpm包
+强势删除：rpm -e 卸载的rpm包 --nodeps
+2、解压 tar包
+tar -xvf tar包（解压到当前目录 mkdir /opt/software/mysql）
+tar -xvf tar包 -C 指定目录
+3、安装rpm包（server、client）
+注意顺序先S再C
+4、查看服务是否启动
+ps -ef|grep mysql
+service mysql start启动
+5、启动mysql服务后进入mysql
+mysql -u root -p
+6、修改root用户密码
+mysqladmin -u root -p password
+7、查看mysql的字符集设置是否是UTF-8
+show variables like 'chara%';
+8、修改配置文件改字符编码
+	配置文件：/usr/share/mysql/my-small.cnf
+	需要把my-small.cnf拷贝到/etc/my.cnf
+	修改my.cnf
+	在[mysqld]下面加上：
+	character_set_server = utf8
+修改完成后，重启mysql服务 service mysql restart
+9、开端口
+iptables -I INPUT -p tcp --dport 3306 -j ACCEPT 开放3306端口
+service iptables save 保存配置
+
+查看mysql日志：/var/lib/mysql
+
+grant all privileges on *.* to root@'%' identified 
+by 'bdqn'(数据库密码) with grant option;
+flush privileges;
+
+tomcat安装
+1、解压tar包
+tar -xvf tar包 -C 指定目录
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
